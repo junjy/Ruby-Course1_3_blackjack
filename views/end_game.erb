@@ -1,0 +1,19 @@
+<div class="well">
+  
+  <h4>End of Game</h4>
+    <img src="/images/cards/spades_ace.jpg"><img src="/images/cards/clubs_king.jpg"><br><br>
+
+  <% if session[:player_cash] >= 1000 %>
+    You are on a roll, aren't you, <%= session[:player_name] %>? Your total earnings is $<%= session[:player_cash] %>. See you in Vegas!<br>
+
+  <% elsif session[:player_cash] >= 500 %>
+    Great job, <%= session[:player_name] %>! Your total earnings is $<%= session[:player_cash] %>. See you next time!<br>
+
+  <% elsif session[:player_cash] >= 1 %>
+    Good try, <%= session[:player_name] %>! Your total earnings is $<%= session[:player_cash] %>. On the bright side, at least you didn't lose everything.<br>
+
+  <% else %>
+    Thanks for your donation, <%= session[:player_name] %>. Better luck next time!<br>
+  <% end %>
+
+</div>

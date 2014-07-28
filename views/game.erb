@@ -1,0 +1,77 @@
+<% def display_score(dealer_hand, dealer_total, player_hand, player_total, player_cash) %>
+  <br>Dealer's Total: <%= dealer_total %><br>
+  <% dealer_hand.each do |card| %>
+      <%= display_cardimage(card) %>
+    <% end %><br><br>
+    Your Total: <%= player_total %><br>
+    <% player_hand.each do |card| %>
+      <%= display_cardimage(card) %>
+    <% end %><br><br>
+    You have $<%= player_cash %> now.<br><br>
+    <% if player_cash == 0 %>
+      <form action="/dealer_turn" method="post">
+        <input type="submit" name="cont_or_stop" value="End Game" class="btn btn-danger"/>
+      </form>
+    <% else %>
+      <form action="/dealer_turn" method="post">
+        <input type="submit" name="cont_or_stop" value="Continue" class="btn btn-success"/>
+      <input type="submit" name="cont_or_stop" value="End Game" class="btn btn-danger"/>
+      </form>
+    <% end %>
+<% end %>
+
+<div class="well">
+  
+  Hi there, <%= session[:player_name].capitalize! %>! You have $<%= session[:player_cash] %> remaining and have bet $<%= session[:player_bet] %> this round.<br>
+ 
+  <h4>Initial Deal</h4>
+  <% initial_deal(session[:carddeck], session[:player_hand], session[:dealer_hand]) %>
+  <% session[:dealer_total] = check_score(session[:dealer_hand]) %>
+  <% session[:player_total] = check_score(session[:player_hand]) %>
+
+  Dealer's Cards:<br>
+  <% session[:dealer_hand].each do |card| %>
+    <% if card == session[:dealer_hand][0] %>
+      <img src='/images/cards/cover.jpg' class='img-polaroid'>
+    <% else %>
+      <%= display_cardimage(card) %>
+    <% end %>
+  <% end %><br><br>
+
+  Your Cards:<br>
+  <% session[:player_hand].each do |card| %>
+    <%=  display_cardimage(card) %>
+  <% end %><br><br>
+
+  <!--Check for Player Blackjack-->
+  <% if check_blackjack(session[:player_hand]) %>
+    <% if check_blackjack(session[:dealer_hand]) %>     
+      <% session[:player_cash] += 0 %>
+      <h4>Result</h4>You and dealer both hit blackjack! Draw.    
+    <% else %>
+      <% session[:player_cash] += session[:player_bet] %>
+      <h4>Result</h4>You hit blackjack! You win!
+    <% end %>
+    
+    <!--display both cards after blackjack-->
+    <% display_score(session[:dealer_hand], session[:dealer_total], session[:player_hand], session[:player_total], session[:player_cash]) %>
+
+  <!--Check for Dealer Blackjack-->
+  <% elsif check_blackjack(session[:dealer_hand]) %>
+    <% session[:player_cash] -= session[:player_bet] %>
+    <h4>Result</h4><%= session[:result] = "Dealer hits blackjack! You lose." %>
+
+    <!--display both cards after blackjack-->
+    <% display_score(session[:dealer_hand], session[:dealer_total], session[:player_hand], session[:player_total], session[:player_cash]) %>
+
+  <!--Else hit or stay -->
+  <% else %>
+    <br>Would you like to hit or stay?<br><br>
+    <form action="/game" method="post"> 
+      <input type="submit" name="hit_or_stay" value="Hit" class="btn btn-success">
+      <input type="submit" name="hit_or_stay" value="Stay" class="btn btn-danger">
+    </form>
+  <% end %>
+
+</div>
+

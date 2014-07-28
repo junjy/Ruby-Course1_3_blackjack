@@ -1,0 +1,28 @@
+<div class="well">
+  
+  <h4>Player's Turn</h4>
+
+  <% draw_card(session[:carddeck], session[:player_hand]) %>
+  <% session[:dealer_total] = check_score(session[:dealer_hand]) %>
+  <% session[:player_total] = check_score(session[:player_hand]) %>
+
+  Dealer's Cards:<br>
+  <% session[:dealer_hand].each do |card| %>
+    <% if card == session[:dealer_hand][0] %>
+      <img src='/images/cards/cover.jpg' class='img-polaroid'>
+    <% else %>
+      <%= display_cardimage(card) %>
+    <% end %>
+  <% end %><br>
+
+  <br>Your Cards:<br>
+  <% session[:player_hand].each do |card| %>
+    <%=  display_cardimage(card) %>
+  <% end %><br><br>
+  Would you like to hit or stay?<br><br>
+  <form action="/game" method="post">
+    <input type="submit" name="hit_or_stay" value="Hit" class="btn btn-success">
+    <input type="submit" name="hit_or_stay" value="Stay" class="btn btn-danger">
+  </form>
+
+</div>

@@ -1,0 +1,18 @@
+<div class="well">
+
+  <h4>Set your bet amount</h4>
+  You have $<%= session[:player_cash] %> to play.
+  Enter your bet for this round.<br>
+
+  <div class="input-prepend">
+
+    <form action="/set_bet" method="post" class="form-inline">
+    <span class="add-on">$</span>
+      <input type="number" min="1" value="100" name="user_bet" class="input-mini"/>
+      <input type="submit" class="btn"/>
+    </form>
+
+  </div>
+
+</div>
+

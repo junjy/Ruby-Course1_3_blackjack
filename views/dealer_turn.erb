@@ -1,0 +1,82 @@
+
+<div class="well">
+
+  <h4>Dealer's Turn</h4>
+  <% dealer_hits(session[:carddeck], session[:dealer_hand]) %>
+  <% session[:dealer_total] = check_score(session[:dealer_hand]) %>
+  <% session[:player_total] = check_score(session[:player_hand]) %>
+
+  Remaining Cards: <%= session[:carddeck].length %><br>
+  <br>Dealer's Total: <%= session[:dealer_total] %><br>
+  <% session[:dealer_hand].each do |card| %>
+    <%= display_cardimage(card) %>
+  <% end %><br><br>
+  Your Total: <%= session[:player_total] %><br>
+  <% session[:player_hand].each do |card| %>
+    <%= display_cardimage(card) %>
+  <% end %><br>
+
+  <h4>Result</h4>
+  <!-- Compare Hands --> 
+  <!-- To move this to helpers -->
+  <% @dealertotal = session[:dealer_total] %>
+  <% @playertotal = session[:player_total] %>
+  <% @playerbet = session[:player_bet] %>
+  <% @playerprofit = 0 %>
+
+  <% if @dealertotal == 21 %>
+    <% if @playertotal == 21 %>
+    You and dealer both score 21! Draw!
+      <% @playerprofit += 0 %>
+    <% else %>
+      Dealer wins with score of 21!
+      <% @playerprofit -= @playerbet %>
+    <% end %>
+
+  <% elsif @playertotal == 21 %>
+    You win with score of 21!
+    <% @playerprofit += @playerbet %>
+
+  <% elsif @dealertotal > 21 %>
+    <% if @playertotal > 21 %>
+      You and dealer both bust! No winner.
+      <% @playerprofit += 0 %>
+    <% else #playertotal <= 21 %>
+      Dealer busts! You win!
+      <% @playerprofit += @playerbet %>
+    <% end %>
+
+  <% elsif @playertotal > 21 %>
+    You bust! Dealer wins!
+    <% @playerprofit -= @playerbet %>
+
+  <% elsif @dealertotal == @playertotal %>
+    You and dealer are in a draw. No winner.
+    <% @playerprofit += 0 %>
+        
+  <% elsif @dealertotal > @playertotal %>
+    Dealer wins!
+    <% @playerprofit -= @playerbet %>
+
+  <% else #playertotal > dealertotal %>
+    You win!
+    <% @playerprofit += @playerbet %>
+
+  <% end %>
+  <!--End of Compare Hands-->
+
+  <!--Continue Play?-->
+  <% session[:player_cash] += @playerprofit %>
+  <br>You have $<%= session[:player_cash] %> now.<br><br>
+  <% if session[:player_cash] == 0%>
+    <form action="/dealer_turn" method="post">
+      <input type="submit" name="cont_or_stop" value="End Game" class="btn btn-danger"/>
+    </form>
+  <% else %>
+  <form action="/dealer_turn" method="post">
+    <input type="submit" name="cont_or_stop" value="Continue" class="btn btn-success"/>
+    <input type="submit" name="cont_or_stop" value="End Game" class="btn btn-danger"/>
+  </form>
+  <% end %>
+
+</div>
